@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.float-right {
+    text-align: right; 
+    float: right;
+}
+
+.float-left {
+    text-align: left; 
+    float: left;
+}
+
+.text-center {
+    text-align: center;
+}
+
+table {
+    width: 100%;
+}
+
+table tr td {
+    padding-top: 15px;
+}
+
+.fa-xmark {
+    color: red;
+}
+
+.fa-pencil {
+    color: green;
+}
+
+.color-red {
+    color: red;
+}
+
+.color-green {
+    color: green;
+}
