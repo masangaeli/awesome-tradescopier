@@ -122,7 +122,7 @@ class TradeMasterController extends Controller
 
                     $splitSymbolDot = explode(".", $symbol);
 
-                    // Replace Symbol with New Symbol
+                    // Replace Symbol with New Symbol 
                     if (sizeof($splitSymbolDot) == 2) {
                         $symbol = $splitSymbolDot[0] .  $clientCon->symbolKeyword;
                     }else {
@@ -136,7 +136,7 @@ class TradeMasterController extends Controller
                     $newTradeData->tradeSourceId = $tradeMasterId;
 
                     $newTradeData->tradeClient = "";
-                    $newTradeData->tradeClientId = $clientCon->id;
+                    $newTradeData->tradeClientId = $clientCon->clientId;
 
                     $newTradeData->tradeType = $tradeType;
                     $newTradeData->symbol = $symbol;
