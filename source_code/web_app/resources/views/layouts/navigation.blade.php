@@ -11,9 +11,7 @@
                 <div class="shrink-0 flex items-center" >
                     <a href="{{ route('dashboard') }}">
                         <img src="{{ asset('pics/logo.png') }}" style="width: 75px; height: 75px;"/>
-                    </a>
-
-                    
+                    </a>                    
                 </div>
 
                 <!-- Navigation Links -->
