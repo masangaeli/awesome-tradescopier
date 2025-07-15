@@ -171,7 +171,8 @@ class TradeClientController extends Controller
             $lotSize = $tradeConnectionDataQ['0']['lotSize'];
             $symbolKeyword = $tradeConnectionDataQ['0']['symbolKeyword'];
 
-            if (is_null($symbolKeyword)) {
+            // Deal with Symbol Keyword
+            if ( is_null($symbolKeyword) || ($symbolKeyword == "SYNC") ) {
                 $symbolKeyword = "";
             }
 
