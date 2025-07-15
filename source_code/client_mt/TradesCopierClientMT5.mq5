@@ -13,6 +13,7 @@
 
 input string token = "";
 input string base_server = "https://tradescopier.flowsignal.xyz";
+input bool manual_placement_mode = false;
 
 CTrade cTrade;
 
@@ -33,18 +34,52 @@ void OnDeinit(const int reason) {
 // Open New Trade
 void openNewTrade(double copyLotSize, string copyTradeType, string copySymbol, double copyOpenPrice, double copySlPrice, double copyTpPrice) {
 
-
-   if (copyTradeType == "BUY") {
-         
-      // Open Buy Order
-      cTrade.Buy(copyLotSize, copySymbol, copyOpenPrice, copySlPrice, copyTpPrice, "IPS Trade");
-        
-   }else if (copyTradeType == "SELL") {
-      
-      // Open Sell Order
-      cTrade.Sell(copyLotSize, copySymbol, copyOpenPrice, copySlPrice, copyTpPrice, "IPS Trade");
-         
-   }
+if (copyTradeType == "BUY") {
+    MqlTradeRequest request = {};
+    MqlTradeResult result = {};
+    
+    request.action = TRADE_ACTION_DEAL;
+    request.symbol = copySymbol;
+    request.volume = copyLotSize;
+    request.price = copyOpenPrice;
+    request.sl = copySlPrice;
+    request.tp = copyTpPrice;
+    request.deviation = 3;
+    request.type = ORDER_TYPE_BUY;
+    request.type_filling = ORDER_FILLING_FOK;
+    request.comment = "IPS Trade";
+    request.magic = 0;
+    
+    // Use OrderSend instead of PositionOpen
+    if (!OrderSend(request, result)) {
+        Print("Failed to open BUY trade. Error: ", GetLastError());
+    } else {
+        Print("BUY trade opened. Ticket: ", result.order);
+    }
+}
+else if (copyTradeType == "SELL") {
+    MqlTradeRequest request = {};
+    MqlTradeResult result = {};
+    
+    request.action = TRADE_ACTION_DEAL;
+    request.symbol = copySymbol;
+    request.volume = copyLotSize;
+    request.price = copyOpenPrice;
+    request.sl = copySlPrice;
+    request.tp = copyTpPrice;
+    request.deviation = 3;
+    request.type = ORDER_TYPE_SELL;
+    request.type_filling = ORDER_FILLING_FOK;
+    request.comment = "IPS Trade";
+    request.magic = 0;
+    
+    // Use OrderSend instead of PositionOpen
+    if (!OrderSend(request, result)) {
+        Print("Failed to open SELL trade. Error: ", GetLastError());
+    } else {
+        Print("SELL trade opened. Ticket: ", result.order);
+    }
+}
 
 }
 
@@ -127,13 +162,22 @@ void check_new_trades() {
 
 }
 
+void check_manual_trades_then_syn() {
+
+}
+
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
 //+------------------------------------------------------------------+
 void OnTick() {
 
-   // Check for New Trades
-   check_new_trades();
+   if (manual_placement_mode == false) {
+      // Check for New Trades
+      check_new_trades();
+   }else {
+      // Check for New Trades Placed and Sync Placement Status
+      check_manual_trades_then_syn();
+   }
    
 }
 
