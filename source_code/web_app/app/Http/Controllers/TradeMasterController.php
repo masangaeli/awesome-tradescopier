@@ -145,7 +145,7 @@ class TradeMasterController extends Controller
 
                     $newTradeData->tradeType = $tradeType;
                     $newTradeData->symbol = $symbol;
-                    $newTradeData->lotSize = $lotSize 
+                    $newTradeData->lotSize = $lotSize;
                     $newTradeData->openPrice = $openPrice; 
                     $newTradeData->slPrice = $stopLoss;
                     $newTradeData->tpPrice = $takeProfit;
