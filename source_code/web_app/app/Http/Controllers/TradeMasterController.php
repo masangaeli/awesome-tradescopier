@@ -19,8 +19,7 @@ class TradeMasterController extends Controller
         //Input Validation
         $request->validate([
             'clientAccountId' => 'required',
-            'masterAccountId' => 'required',
-            'lotSize' => 'required'
+            'masterAccountId' => 'required'
         ]);
 
         $clientAccountId = $request->clientAccountId;
@@ -28,11 +27,17 @@ class TradeMasterController extends Controller
         $lotSize = $request->lotSize;
         $symbolKeyword = $request->symbolKeyword;
 
+        if ($lotSize < 0.01) {
+            $lotSize = "SYNC";
+        }
+
+        if (strlen($symbolKeyword) == 0) {
+            $symbolKeyword = "SYNC";
+        }
+
         // Add New Connection
         $newConnection = new TradeMasterClientConnection();
-        
         $newConnection->userId = Auth::User()->id;
-
         $newConnection->masterId = $masterAccountId;
         $newConnection->clientId = $clientAccountId;
         $newConnection->lotSize = $lotSize;
@@ -45,7 +50,6 @@ class TradeMasterController extends Controller
             $message = "Failed to Add New Trade Master Client Connection. Please Try Again Later";
             return redirect()->back()->with(['errorMessage' => $message]);
         }
-
         
     }
 
@@ -54,9 +58,7 @@ class TradeMasterController extends Controller
     {
         //Input Validation
         $request->validate([
-            'token' => 'required',
-            'stopLoss' => 'required',
-            'takeProfit' => 'required'
+            'token' => 'required'
         ]);
 
         $token = $request->token;
@@ -68,11 +70,6 @@ class TradeMasterController extends Controller
         $takeProfit = (double) $request->takeProfit;
         $stopLoss = (double) $request->stopLoss;
         $ticketId = $request->ticketId;
-
-        // Check Connection if Allows TP & SL to be 0
-
-
-        if ($stopLoss != 0 && $takeProfit != 0) {
 
         // Check Master With This Token
         $getMaster = TradeMaster::where('masterToken', $token)->get()->toArray();
@@ -96,7 +93,6 @@ class TradeMasterController extends Controller
                     $tradeType = "SELL";
                 }
 
-
                 // Store Trade for Reference if No Client 
                 $newMasterRefTrade = new TradeData();
                 $newMasterRefTrade->userId = $userId;
@@ -113,20 +109,29 @@ class TradeMasterController extends Controller
                 $newMasterRefTrade->ticketId = $ticketId;
                 $newMasterRefTrade->save();
 
-
                 // Get Clients Connected to This Master
                 // Then Add Trade Data to Their Accounts
                 $clientMasterConnectedList = TradeMasterClientConnection::where('masterId', $tradeMasterId)->get();
 
                 foreach($clientMasterConnectedList as $clientCon) {
 
-                    $splitSymbolDot = explode(".", $symbol);
+                    // Dealing with Symbol Sync
+                    if ($clientCon->symbolKeyword != "SYNC") {
 
-                    // Replace Symbol with New Symbol
-                    if (sizeof($splitSymbolDot) == 2) {
-                        $symbol = $splitSymbolDot[0] .  $clientCon->symbolKeyword;
-                    }else {
-                        $symbol = $symbol .  $clientCon->symbolKeyword;
+                        $splitSymbolDot = explode(".", $symbol);
+
+                        // Replace Symbol with New Symbol 
+                        if (sizeof($splitSymbolDot) == 2) {
+                            $symbol = $splitSymbolDot[0] .  $clientCon->symbolKeyword;
+                        }else {
+                            $symbol = $symbol .  $clientCon->symbolKeyword;
+                        }
+                    }
+
+
+                    // Dealing with Lot Size Sync
+                    if ($clientCon->lotSize != "SYNC") {
+                        $lotSize = $clientCon->lotSize;
                     }
                     
                     $newTradeData = new TradeData();
@@ -136,18 +141,17 @@ class TradeMasterController extends Controller
                     $newTradeData->tradeSourceId = $tradeMasterId;
 
                     $newTradeData->tradeClient = "";
-                    $newTradeData->tradeClientId = $clientCon->id;
+                    $newTradeData->tradeClientId = $clientCon->clientId;
 
                     $newTradeData->tradeType = $tradeType;
                     $newTradeData->symbol = $symbol;
-                    $newTradeData->lotSize = $clientCon->lotSize; 
+                    $newTradeData->lotSize = $lotSize;
                     $newTradeData->openPrice = $openPrice; 
                     $newTradeData->slPrice = $stopLoss;
                     $newTradeData->tpPrice = $takeProfit;
                     $newTradeData->ticketId = $ticketId;
                     $newTradeData->copyStatus = 0;
                     $newTradeData->save();
-
                 }
 
             }
@@ -156,13 +160,12 @@ class TradeMasterController extends Controller
 
         }else {
 
-            return response()->json(array('status' => False, 'message' => '0 SL / TP'), 200);
+            return response()->json(array(
+                    'status' => False, 
+                    'message' => 'Master does not Exist'
+                ), 200);
         }
         
-        }else {
-
-            return response()->json(array('status' => False), 200);
-        }
     }
 
     //postNewMaster
