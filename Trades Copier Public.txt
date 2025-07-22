@@ -1,0 +1,17 @@
+
+Trades Copier Container
+============================================
+
+docker run -it -d \
+  --label traefik.http.routers.trades_copier.rule=Host\(\`tradescopier.flowsignal.xyz\`\) \
+  --label traefik.http.routers.trades_copier.tls.certresolver=lets-encrypt \
+  --label traefik.http.routers.trades_copier.tls=true \
+  --label traefik.http.routers.trades_copier.service=trades_copier-http-service \
+  --label traefik.http.services.trades_copier-http-service.loadbalancer.server.port=80 \
+  --name trades_copier \
+  --network web \
+  --restart always \
+  --expose 80 \
+ emasanga/ipbox:latest
+
+
