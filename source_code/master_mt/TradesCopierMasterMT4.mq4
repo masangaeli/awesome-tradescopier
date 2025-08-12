@@ -34,10 +34,10 @@ void OnDeinit(const int reason) {
 void uploadNewTrade(string ticketId, double openPrice, double lotSize, double takeProfit, double stopLoss) {
 
    Print("Ticket ID : " + ticketId);
-   Print("Order Open Price : " + openPrice);
-   Print("Order Lot Size : " + lotSize);
-   Print("Order Take Profit : " + takeProfit);
-   Print("Order Stop Loss : " + stopLoss);
+   Print("Order Open Price : " + DoubleToStr(openPrice));
+   Print("Order Lot Size : " + DoubleToStr(lotSize));
+   Print("Order Take Profit : " + DoubleToStr(takeProfit));
+   Print("Order Stop Loss : " + DoubleToStr(stopLoss));
 
    string cookie = NULL,headers;
    char post[], result[];
@@ -46,9 +46,10 @@ void uploadNewTrade(string ticketId, double openPrice, double lotSize, double ta
    string new_trade_post_url = base_server + "/api/post/master/trade/data";
    
    //Adding Post Data on Data Post
-   string data_post_params = "?token="+token+"&openPrice="+openPrice+"&lotSize=";
-   data_post_params += lotSize + "&takeProfit="+takeProfit+"&stopLoss="+stopLoss+"&symbol="+OrderSymbol();
-   data_post_params += "&ticketId="+ticketId+"&tradeType="+OrderType();
+   string data_post_params = "?token=" + token + "&openPrice=" + DoubleToStr(openPrice) + "&lotSize=";
+   data_post_params += DoubleToStr(lotSize) + "&takeProfit=" + DoubleToStr(takeProfit);
+   data_post_params += "&stopLoss=" + DoubleToStr(stopLoss) + "&symbol=" + OrderSymbol();
+   data_post_params += "&ticketId=" + ticketId + "&tradeType=" + DoubleToStr(OrderType());
    
    StringReplace(data_post_params, " ", "%20");
    
@@ -89,7 +90,7 @@ void OnTick()
                 {
                     Print("New trade detected: ", OrderTicket());
                     
-                    string ticketId = OrderTicket();
+                    string ticketId = DoubleToStr(OrderTicket());
                     double openPrice = OrderOpenPrice();
                     double lotSize = OrderLots();
                     double takeProfit = OrderTakeProfit();
