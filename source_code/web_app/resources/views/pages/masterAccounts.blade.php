@@ -25,8 +25,8 @@
 
     <div class="py-12 container-fluid">
        
-    <div>
-        <table class="table table-bordered">
+    <div class="container">
+        <table class="table table-bordered table-striped table-hovered">
             <thead>
                 <tr>
                     <td>S/N</td>
@@ -54,7 +54,7 @@
                             </div>
 
                             <div class="col-4">
-                                <i class="fa-solid fa-xmark"></i>
+                                <i class="fa-solid fa-xmark" onclick="deleteMasterAccount('{{ $masterAccount->id }}')"></i>
                             </div>
                         </div>
                     </td>
@@ -100,6 +100,7 @@
                             <select class="form-control" name="mtVersion">
                                 <option value="MT4">Meta Trader 4</option>
                                 <option value="MT5">Meta Trader 5</option>
+                                <option value="API_SYNC">API Request</option>
                                 <option value="TELEGRAM">Telegram Channel</option>
                             </select>
                         </td>
@@ -121,3 +122,43 @@
 
     </div>
 </x-app-layout>
+
+
+<script type="text/javascript">
+
+function deleteMasterAccount(masterAccountId) {
+
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+
+        if (result.isConfirmed) {
+
+            $.get('/api/delete/master/account?masterAccountId=' + masterAccountId, function(data) {
+                var jsonData = JSON.parse(JSON.stringify(data))
+
+                if (jsonData['status'] == true) {
+                    Swal.fire({
+                    title: "Deleted!",
+                    text: "Master Account Have Been Deleted Successfully.",
+                    icon: "success"
+                    }).then(function () {
+                        // Reload Page
+                        window.location.reload()
+                    })
+                }
+
+            })
+            
+        }
+    })
+
+}
+
+</script>

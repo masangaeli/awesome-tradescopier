@@ -24,9 +24,9 @@
 
     </x-slot>
 
-    <div class="py-12 container-fluid">
+    <div class="py-12 container">
        
-        <table class="table table-bordered">
+        <table class="table table-bordered table-striped table-hovered">
             <thead>
                 <tr>
                     <td>S/N</td>
@@ -62,7 +62,7 @@
                             </div>
 
                             <div class="col-4">
-                                <i class="fa-solid fa-xmark" onclick="deleteClient()"></i>
+                                <i class="fa-solid fa-xmark" onclick="deleteClient('{{ $clientAccount->id }}')"></i>
                             </div>
                         </div>
                     </td>
@@ -170,7 +170,8 @@
 <script type="text/javascript">
 
 
-function deleteClient() {
+function deleteClient(clientAccountId) {
+
     Swal.fire({
         title: "Are you sure?",
         text: "You won't be able to revert this!",
@@ -180,14 +181,28 @@ function deleteClient() {
         cancelButtonColor: "#d33",
         confirmButtonText: "Yes, delete it!"
     }).then((result) => {
-        // if (result.isConfirmed) {
-        //     Swal.fire({
-        //     title: "Deleted!",
-        //     text: "Your file has been deleted.",
-        //     icon: "success"
-        //     });
-        // }
-    });
+
+        if (result.isConfirmed) {
+
+            $.get('/api/delete/client/account?clientAccountId=' + clientAccountId, function(data) {
+                var jsonData = JSON.parse(JSON.stringify(data))
+
+                if (jsonData['status'] == true) {
+                    Swal.fire({
+                    title: "Deleted!",
+                    text: "Client Account Have Been Deleted Successfully.",
+                    icon: "success"
+                    }).then(function () {
+                        // Reload Page
+                        window.location.reload()
+                    })
+                }
+
+            })
+            
+        }
+    })
+
 }
 
 function addMasterPrepare(clientAccountId, clientAccountTitle) {
@@ -202,7 +217,6 @@ function addMasterPrepare(clientAccountId, clientAccountTitle) {
         var mastersList = jsonData['mastersList'];
 
         var mastersListAdded = jsonData['mastersListAdded']
-        
 
 
         $("#addNewMasterList").html(`
