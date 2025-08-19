@@ -168,6 +168,19 @@ class TradeMasterController extends Controller
         
     }
 
+    //deleteMasterAccount
+    public function deleteMasterAccount(Request $request)
+    {
+        $masterAccountId = $request->masterAccountId;
+
+        // Delete Master Account
+        $deleteTradeMaster = TradeMaster::find($masterAccountId);
+        $deleteTradeMaster->delete();
+
+        return response()->json(array('status' => True), 200);
+    }
+
+
     //postNewMaster
     public function postNewMaster(Request $request)
     {

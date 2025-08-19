@@ -14,6 +14,18 @@ use App\Models\TradeMasterClientConnection;
 class TradeClientController extends Controller
 {
 
+    // deleteClientAccount
+    public function deleteClientAccount(Request $request)
+    {
+        $clientAccountId = $request->clientAccountId;
+
+        // Delete Client Account
+        $deleteClientAccount = TradeClient::find($clientAccountId);
+        $deleteClientAccount->delete();
+
+        return response()->json(array('status' => True), 200);
+    }
+
     //deletePostClientMasterConnection
     public function deletePostClientMasterConnection(Request $request)
     {

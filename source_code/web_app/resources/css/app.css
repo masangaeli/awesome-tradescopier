@@ -39,3 +39,8 @@ table tr td {
 .color-green {
     color: green;
 }
+
+.pagination {
+    text-align: right;
+    float: right;
+}
