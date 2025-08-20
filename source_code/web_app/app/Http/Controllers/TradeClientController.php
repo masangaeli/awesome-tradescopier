@@ -207,6 +207,39 @@ class TradeClientController extends Controller
         ), 200);
     }
 
+    //postUpdateClient
+    public function postUpdateClient(Request $request)
+    {
+          //Input Validation
+          $request->validate([
+            'clientId' => 'required',
+            'title' => 'required',
+            'mtVersion' => 'required',
+        ]);
+
+        $title = $request->title;
+        $info  = $request->info;
+        $clientId = $request->clientId;
+        $mtVersion = $request->mtVersion;
+        $clientTradeComment = $request->clientTradeComment;
+
+        // Update Client
+        $updateClient = TradeClient::find($clientId);
+        $updateClient->clientTitle = $title;
+        $updateClient->clientInfo = $info;
+        $updateClient->clientSoftware = $mtVersion;
+        $updateClient->clientTradeComment = $clientTradeComment;
+
+        if ($updateClient->save()) {
+            $message = "Client Account Have Been Updated Successfully.";
+            return redirect()->back()->with(['successMessage' => $message]);
+        
+        }else {
+            $message = "Failed to Update Client Account. Please Try Again Later";
+            return redirect()->back()->with(['errorMessage' => $message]);
+        }
+    }
+
     //postNewClient
     public function postNewClient(Request $request)
     {

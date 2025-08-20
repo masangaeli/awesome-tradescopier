@@ -31,5 +31,5 @@ Route::get('/client/pull/master/trades/list', [TradeClientController::class, 'cl
 // Get Masters Not Added to Client
 Route::get('/pull/client/not/added/masters', [TradeClientController::class, 'pullClientsNotAddedMasters']);
 
-// Post New Trade from Master
+// Post New Trade from Master 
 Route::post('/post/master/trade/data', [TradeMasterController::class, 'postNewTradeForMaster']);
