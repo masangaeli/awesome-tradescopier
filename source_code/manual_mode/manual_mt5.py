@@ -8,11 +8,9 @@
 # Developed as a Part of Trade Copier to 
 # Enable Trade Copier to Place Trades in Manual Mode
 
-import json 
 import tools
 import pyautogui
 from time import sleep
-import pygetwindow as gw
 
 # Initiate Config
 config = tools.initiate_config()
@@ -72,6 +70,9 @@ while True:
             if order_type == "SELL":
                 pyautogui.press('tab')
                 pyautogui.press('tab') 
+                pyautogui.press('tab')
+
+                sleep(1)
                 pyautogui.press('space')
                 sleep(1)
 
@@ -85,6 +86,7 @@ while True:
                 sleep(0.5)
 
             elif order_type == "BUY":
+                pyautogui.press('tab')
                 pyautogui.press('tab')
                 pyautogui.press('tab')
                 pyautogui.press('tab')
@@ -103,7 +105,7 @@ while True:
             # Clear Trade Id
             tools.clear_trade_id_status(tradeDataId, base_api_server, connection_token)
         else:
-            print ("Json Status is False")
+            print ("Json Status is False\n")
             sleep(1)
     else:
         sleep(1)
