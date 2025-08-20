@@ -1,9 +1,8 @@
-
-Trades Copier Container
+Awesome Trades Copier Container
 ============================================
 
 docker run -it -d \
-  --name ipbox \
+  --name awesome_tradescopier \
   --network web \
   -v ./source_code:/var/www/html \
   --restart always \

@@ -31,8 +31,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/postNewClientMasterConnection', [TradeMasterController::class, 'postNewClientMasterConnection'])
         ->name('postNewClientMasterConnection');
 
+    // Update Client
+    Route::post('/postUpdateClient', [TradeClientController::class, 'postUpdateClient'])->name('postUpdateClient');
+
     // Create Client
     Route::post('/postNewClient', [TradeClientController::class, 'postNewClient'])->name('postNewClient');
+
+    // Update Master
+    Route::post('/postUpdateMaster', [TradeMasterController::class, 'postUpdateMaster'])->name('postUpdateMaster');
 
     // Create Master
     Route::post('/postNewMaster', [TradeMasterController::class, 'postNewMaster'])->name('postNewMaster');

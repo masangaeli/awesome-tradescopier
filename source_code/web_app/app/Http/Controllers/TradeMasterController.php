@@ -53,6 +53,7 @@ class TradeMasterController extends Controller
         
     }
 
+
     //postNewTradeForMaster
     public function postNewTradeForMaster(Request $request)
     {
@@ -166,6 +167,49 @@ class TradeMasterController extends Controller
                 ), 200);
         }
         
+    }
+
+    //deleteMasterAccount
+    public function deleteMasterAccount(Request $request)
+    {
+        $masterAccountId = $request->masterAccountId;
+
+        // Delete Master Account
+        $deleteTradeMaster = TradeMaster::find($masterAccountId);
+        $deleteTradeMaster->delete();
+
+        return response()->json(array('status' => True), 200);
+    }
+
+
+    //postUpdateMaster
+    public function postUpdateMaster(Request $request)
+    {
+        //Input Validation
+        $request->validate([
+            'masterAccountId' => 'required',
+            'title' => 'required',
+            'mtVersion' => 'required',
+        ]);
+
+        $title = $request->title;
+        $info  = $request->info;
+        $mtVersion = $request->mtVersion;
+        $masterAccountId = $request->masterAccountId;
+
+        // Update Master
+        $updateMaster = TradeMaster::find($masterAccountId);
+        $updateMaster->masterTitle = $title;
+        $updateMaster->masterInfo = $info;
+        $updateMaster->masterSoftware = $mtVersion;
+
+        if ($updateMaster->save()) {
+            $message = "Master Account Have Been Updated Successfully.";
+            return redirect()->back()->with(['successMessage' => $message]);
+        }else {
+            $message = "Failed to Create New Master Account. Please Try Again Later";
+            return redirect()->back()->with(['errorMessage' => $message]);
+        }
     }
 
     //postNewMaster
