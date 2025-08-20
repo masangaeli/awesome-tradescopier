@@ -13,7 +13,6 @@
 
 input string token = "";
 input string base_server = "https://tradescopier.flowsignal.xyz";
-input bool manual_placement_mode = false;
 
 CTrade cTrade;
 
@@ -171,13 +170,8 @@ void check_manual_trades_then_syn() {
 //+------------------------------------------------------------------+
 void OnTick() {
 
-   if (manual_placement_mode == false) {
-      // Check for New Trades
-      check_new_trades();
-   }else {
-      // Check for New Trades Placed and Sync Placement Status
-      check_manual_trades_then_syn();
-   }
+   // Check for New Trades Placed and Sync Placement Status
+   check_manual_trades_then_syn();
    
 }
 

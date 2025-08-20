@@ -55,6 +55,10 @@ void uploadNewTrade(string ticketId, double openPrice, double lotSize, double ta
                              "&ticketId=" + ticketId +
                              "&tradeType=" + IntegerToString(tradeType);
 
+
+   Print("Upload URL : " + new_trade_post_url);
+   Print("Post Params : " + data_post_params);
+
    StringReplace(data_post_params, " ", "%20");
 
    ResetLastError();
