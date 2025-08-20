@@ -58,7 +58,7 @@
                             </div>
 
                             <div class="col-4">
-                                <i class="fa-solid fa-pencil"></i>
+                                <i class="fa-solid fa-pencil" onclick="updateClient('{{ $clientAccount->id }}', '{{ $clientAccount->clientSoftware }}', '{{ $clientAccount->clientTradeComment }}', '{{ $clientAccount->clientInfo }}', '{{ $clientAccount->clientTitle }}')"></i>
                             </div>
 
                             <div class="col-4">
@@ -95,6 +95,79 @@
             </div>
         </div>
 
+
+
+         <!-- Update Client Account Modal -->
+         <div class="modal fade" id="updateClientAccountModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Update Client Account</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                
+            <form action="{{ route('postUpdateClient') }}" method="POST">
+                <table>
+                    <tr>
+                        <td>Title <span class="color-red">*</span></td>
+                        <td>
+                            <input type="text" id="edit_title" 
+                                   name="title" 
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                   placeholder="Client Title" required />
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Info</td>   
+                        <td>
+                            <input type="text" id="edit_info" 
+                                name="info" 
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                placeholder="Client Info" required />
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Trades Comment <span class="color-red">*</span></td>
+                        <td>
+                            <input type="text" id="edit_clientTradeComment" 
+                                name="clientTradeComment" 
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                placeholder="Trades Comment" required />
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>MT Version <span class="color-red">*</span></td>
+                        <td>
+                            <select id="edit_mtVersion" name="mtVersion" 
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                <option value="MT4">Meta Trader 4</option>
+                                <option value="MT5">Meta Trader 5</option>
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <input type="hidden" name="clientId" id="edit_clientId" />
+                            <input type="hidden" name="_token" value="{{ Session::token() }}">
+                        </td>
+                        <td><input type="submit" value="Update Client" class="btn btn-primary form-control"></td>
+                    </tr>                    
+                </table>
+            </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+            </div>
+            
+        </div>
+        </div>
+
        
 
         <!-- New Client Account Modal -->
@@ -112,7 +185,7 @@
                     <tr>
                         <td>Title <span class="color-red">*</span></td>
                         <td>
-                            <input type="text" id="first_name" 
+                            <input type="text" id="title" 
                                    name="title" 
                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                                    placeholder="Client Title" required />
@@ -161,6 +234,7 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
             </div>
+
         </div>
         </div>
 
@@ -169,6 +243,18 @@
 
 <script type="text/javascript">
 
+function updateClient(clientId, clientSoftware, clientTradesComment, clientInfo, clientTitle) {
+
+    $("#updateClientAccountModal").modal('show')
+
+    $("#edit_clientId").val(clientId);
+
+    $("#edit_mtVersion").val(clientSoftware)
+    $("#edit_clientTradeComment").val(clientTradesComment)
+    $("#edit_info").val(clientInfo)
+    $("#edit_title").val(clientTitle)
+
+}
 
 function deleteClient(clientAccountId) {
 
