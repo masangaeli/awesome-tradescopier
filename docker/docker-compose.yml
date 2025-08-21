@@ -1,5 +1,3 @@
-version: "3.8"
-
 networks:
   web:
     external: true
@@ -12,5 +10,6 @@ services:
     networks:
       - web
     ports:
-      - "8088:8000"   # Public access to port 8000 inside container
-      - "88:80"       # Public access to port 80 inside container
+      - "8080:8000"
+      - "80:80"
+    command: bash -c "service apache2 start && service mysql start && tail -f /dev/null"
