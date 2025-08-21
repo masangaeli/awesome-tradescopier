@@ -68,7 +68,7 @@
                 <div class="container row">
                     <p>
                         <a href="#">
-                            Swagger API Documentation
+                            Version 1.0.0
                         </a>
                     </p>
                 </div>

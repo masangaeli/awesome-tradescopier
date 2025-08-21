@@ -1,0 +1,16 @@
+version: "3.8"
+
+networks:
+  web:
+    external: true
+
+services:
+  awesome_tradescopier:
+    image: emasanga/ipbox:latest
+    container_name: awesome_tradescopier
+    restart: always
+    networks:
+      - web
+    ports:
+      - "8088:8000"   # Public access to port 8000 inside container
+      - "88:80"       # Public access to port 80 inside container

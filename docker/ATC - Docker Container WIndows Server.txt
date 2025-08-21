@@ -1,0 +1,34 @@
+Awesome Trades Copier Container
+============================================
+
+docker run -it -d \
+  --name awesome_tradescopier \
+  --network web \
+  --restart always \
+  -p 8088:8000 \
+  -p 88:80 \
+ emasanga/ipbox:latest
+
+
+
+
+Docker Yaml File
+============================================
+
+version: "3.8"
+
+networks:
+  web:
+    external: true
+
+services:
+  awesome_tradescopier:
+    image: emasanga/ipbox:latest
+    container_name: awesome_tradescopier
+    restart: always
+    networks:
+      - web
+    ports:
+      - "8080:8000"  
+      - "80:80"      
+
