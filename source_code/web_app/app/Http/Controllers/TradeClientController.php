@@ -63,6 +63,7 @@ class TradeClientController extends Controller
 
     }
 
+
     //clientPostClientTradeCopied
     public function clientPostClientTradeCopied(Request $request)
     {
