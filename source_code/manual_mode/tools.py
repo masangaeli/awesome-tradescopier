@@ -1,5 +1,7 @@
-import json
+import json, time
 import requests
+import pyautogui
+import pygetwindow as gw
 
 def get_trades_queue(base_api_server, connection_token):
     # Meta Get Data URL
@@ -52,12 +54,10 @@ def clear_trade_id_status(trade_id, base_api_server, connection_token):
     return response.json() 
     
 
-import pygetwindow as gw
-import time
 
 def activate_window(window_title):
     try:
-        # Find the window by title (partial match)
+        # Find the window by title (partial match) 
         window = gw.getWindowsWithTitle(window_title)[0]
         
         # Additional checks before activation
@@ -73,7 +73,6 @@ def activate_window(window_title):
         # Double-check if activation worked
         if not window.isActive:
             # Fallback method - using alt+tab
-            import pyautogui
             pyautogui.hotkey('alt', 'tab')
             time.sleep(0.5)
         
