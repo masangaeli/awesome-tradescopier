@@ -1,24 +1,27 @@
 //+------------------------------------------------------------------+
 //|                                        TradesCopierMasterMT5.mq5 |
-//|                                                   Copyright 2025 |
-//|                                             https://www.mql5.com |
+//|                        Patched version - Ticket-based detection |
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2025"
 #property link      "https://www.mql5.com"
-#property version   "1.00"
+#property version   "1.01"
 #property strict
 
-#include <JAson.mqh>
+#include <Arrays\ArrayLong.mqh>
 
 input string token = "";
 input string base_server = "https://tradescopier.flowsignal.xyz";
+
+CArrayLong sentTickets;         // Store already sent trade tickets
+string sentFile = "sent_tickets.txt"; // File to persist sent trades
 
 //+------------------------------------------------------------------+
 //| Expert initialization                                            |
 //+------------------------------------------------------------------+
 int OnInit()
 {
-   return(INIT_SUCCEEDED);
+   LoadSentTickets();
+   return INIT_SUCCEEDED;
 }
 
 //+------------------------------------------------------------------+
@@ -26,12 +29,48 @@ int OnInit()
 //+------------------------------------------------------------------+
 void OnDeinit(const int reason)
 {
+   SaveSentTickets();
+}
+
+//+------------------------------------------------------------------+
+//| Load already sent tickets from file                              |
+//+------------------------------------------------------------------+
+void LoadSentTickets()
+{
+   ResetLastError();
+   int handle = FileOpen(sentFile, FILE_READ|FILE_TXT);
+   if(handle != INVALID_HANDLE)
+   {
+      while(!FileIsEnding(handle))
+      {
+         ulong ticket = (ulong)FileReadNumber(handle);
+         if(ticket > 0)
+            sentTickets.Add(ticket);
+      }
+      FileClose(handle);
+   }
+}
+
+//+------------------------------------------------------------------+
+//| Save sent tickets to file                                        |
+//+------------------------------------------------------------------+
+void SaveSentTickets()
+{
+   int handle = FileOpen(sentFile, FILE_WRITE|FILE_TXT);
+   if(handle != INVALID_HANDLE)
+   {
+      for(int i = 0; i < sentTickets.Total(); i++)
+         FileWrite(handle, sentTickets.At(i));
+      FileClose(handle);
+   }
 }
 
 //+------------------------------------------------------------------+
 //| Upload new trade                                                  |
 //+------------------------------------------------------------------+
-void uploadNewTrade(string ticketId, double openPrice, double lotSize, double takeProfit, double stopLoss, string symbol, int tradeType)
+void uploadNewTrade(string ticketId, double openPrice, double lotSize, 
+                    double takeProfit, double stopLoss, string symbol, 
+                    int tradeType, string tradeComment)
 {
    Print("Ticket ID : " + ticketId);
    Print("Order Open Price : " + DoubleToString(openPrice, _Digits));
@@ -53,8 +92,8 @@ void uploadNewTrade(string ticketId, double openPrice, double lotSize, double ta
                              "&stopLoss=" + DoubleToString(stopLoss, _Digits) +
                              "&symbol=" + symbol +
                              "&ticketId=" + ticketId +
-                             "&tradeType=" + IntegerToString(tradeType);
-
+                             "&tradeType=" + IntegerToString(tradeType) +
+                             "&tradeComment=" + tradeComment;
 
    Print("Upload URL : " + new_trade_post_url);
    Print("Post Params : " + data_post_params);
@@ -79,52 +118,51 @@ void uploadNewTrade(string ticketId, double openPrice, double lotSize, double ta
 }
 
 //+------------------------------------------------------------------+
-//| Expert tick                                                       |
+//| Detect and send new trades                                       |
 //+------------------------------------------------------------------+
 void OnTick()
 {
-   static int lastTotalPositions = 0;
-
    int totalPositions = PositionsTotal();
 
-   if(totalPositions > lastTotalPositions)
+   for(int i = 0; i < totalPositions; i++)
    {
-      for(int i = lastTotalPositions; i < totalPositions; i++)
+      ulong ticket = PositionGetTicket(i); // MQL5 way to get ticket directly
+
+      if(ticket > 0 && sentTickets.Search(ticket) == -1)
       {
-         if (PositionSelect(PositionGetSymbol(i)))
+         if(PositionSelectByTicket(ticket)) // Select position by ticket
          {
-            int type = (int)PositionGetInteger(POSITION_TYPE);
+            string symbol = PositionGetString(POSITION_SYMBOL);
+            string tradeComment = PositionGetString(POSITION_COMMENT);
+            double openPrice = PositionGetDouble(POSITION_PRICE_OPEN);
+            double lotSize = PositionGetDouble(POSITION_VOLUME);
+            double takeProfit = PositionGetDouble(POSITION_TP);
+            double stopLoss = PositionGetDouble(POSITION_SL);
+            int type = (int) PositionGetInteger(POSITION_TYPE);
 
-            if(type == POSITION_TYPE_BUY || type == POSITION_TYPE_SELL)
-            {
-               ulong ticket = PositionGetInteger(POSITION_TICKET);
-               string symbol = PositionGetString(POSITION_SYMBOL);
-               double openPrice = PositionGetDouble(POSITION_PRICE_OPEN);
-               double lotSize = PositionGetDouble(POSITION_VOLUME);
-               double takeProfit = PositionGetDouble(POSITION_TP);
-               double stopLoss = PositionGetDouble(POSITION_SL);
+            Print("New trade detected: ", ticket);
 
-               Print("New trade detected: ", ticket);
+            uploadNewTrade(
+               IntegerToString((int)ticket),
+               openPrice,
+               lotSize,
+               takeProfit,
+               stopLoss,
+               symbol,
+               type,
+               tradeComment
+            );
 
-               uploadNewTrade(
-                  IntegerToString((int)ticket),
-                  openPrice,
-                  lotSize,
-                  takeProfit,
-                  stopLoss,
-                  symbol,
-                  type
-               );
-            }
+            sentTickets.Add(ticket);
+            SaveSentTickets();
          }
       }
    }
-
-   lastTotalPositions = totalPositions;
 }
 
+
 //+------------------------------------------------------------------+
-//| Error description                                                 |
+//| Error description                                                |
 //+------------------------------------------------------------------+
 string ErrorDescription(int error_code)
 {
@@ -171,7 +209,7 @@ string ErrorDescription(int error_code)
 }
 
 //+------------------------------------------------------------------+
-//| Get HTTP response code                                            |
+//| Get HTTP response code                                           |
 //+------------------------------------------------------------------+
 int GetHttpResponseCode(string headers)
 {
