@@ -1,6 +1,6 @@
-# Awesome Trades Copier 
+# Awesome Trades Copier Docker Compose File
 #
-# Docker Compose Yaml File
+# Version 1.0.0 - 22nd August 2025 
 
 networks:
   web:
