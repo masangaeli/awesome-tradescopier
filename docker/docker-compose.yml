@@ -1,3 +1,7 @@
+# Awesome Trades Copier Docker Compose File
+#
+# Version 1.0.0 - 22nd August 2025 
+
 networks:
   web:
     external: true
