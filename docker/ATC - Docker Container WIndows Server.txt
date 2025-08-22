@@ -15,8 +15,6 @@ docker run -it -d \
 Docker Yaml File
 ============================================
 
-version: "3.8"
-
 networks:
   web:
     external: true

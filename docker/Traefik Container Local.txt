@@ -9,5 +9,3 @@ docker run -it -d \
   -p 8088:8000 \
   -p 88:80 \
  emasanga/ipbox:latest
-
-
