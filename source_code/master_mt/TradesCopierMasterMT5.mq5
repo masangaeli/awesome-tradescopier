@@ -4,7 +4,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2025"
 #property link      "https://www.mql5.com"
-#property version   "1.01"
+#property version   "1.02"
 #property strict
 
 #include <Arrays\ArrayLong.mqh>
@@ -12,57 +12,14 @@
 input string token = "";
 input string base_server = "https://tradescopier.flowsignal.xyz";
 
-CArrayLong sentTickets;         // Store already sent trade tickets
-string sentFile = "sent_tickets.txt"; // File to persist sent trades
+CArrayLong sentTickets;  // Store already sent trade tickets in memory only
 
 //+------------------------------------------------------------------+
 //| Expert initialization                                            |
 //+------------------------------------------------------------------+
 int OnInit()
 {
-   LoadSentTickets();
    return INIT_SUCCEEDED;
-}
-
-//+------------------------------------------------------------------+
-//| Expert deinitialization                                          |
-//+------------------------------------------------------------------+
-void OnDeinit(const int reason)
-{
-   SaveSentTickets();
-}
-
-//+------------------------------------------------------------------+
-//| Load already sent tickets from file                              |
-//+------------------------------------------------------------------+
-void LoadSentTickets()
-{
-   ResetLastError();
-   int handle = FileOpen(sentFile, FILE_READ|FILE_TXT);
-   if(handle != INVALID_HANDLE)
-   {
-      while(!FileIsEnding(handle))
-      {
-         ulong ticket = (ulong)FileReadNumber(handle);
-         if(ticket > 0)
-            sentTickets.Add(ticket);
-      }
-      FileClose(handle);
-   }
-}
-
-//+------------------------------------------------------------------+
-//| Save sent tickets to file                                        |
-//+------------------------------------------------------------------+
-void SaveSentTickets()
-{
-   int handle = FileOpen(sentFile, FILE_WRITE|FILE_TXT);
-   if(handle != INVALID_HANDLE)
-   {
-      for(int i = 0; i < sentTickets.Total(); i++)
-         FileWrite(handle, sentTickets.At(i));
-      FileClose(handle);
-   }
 }
 
 //+------------------------------------------------------------------+
@@ -84,7 +41,6 @@ void uploadNewTrade(string ticketId, double openPrice, double lotSize,
 
    string new_trade_post_url = base_server + "/api/post/master/trade/data";
 
-   // Adding Post Data
    string data_post_params = "?token=" + token +
                              "&openPrice=" + DoubleToString(openPrice, _Digits) +
                              "&lotSize=" + DoubleToString(lotSize, 2) +
@@ -126,11 +82,11 @@ void OnTick()
 
    for(int i = 0; i < totalPositions; i++)
    {
-      ulong ticket = PositionGetTicket(i); // MQL5 way to get ticket directly
+      ulong ticket = PositionGetTicket(i);
 
       if(ticket > 0 && sentTickets.Search(ticket) == -1)
       {
-         if(PositionSelectByTicket(ticket)) // Select position by ticket
+         if(PositionSelectByTicket(ticket))
          {
             string symbol = PositionGetString(POSITION_SYMBOL);
             string tradeComment = PositionGetString(POSITION_COMMENT);
@@ -154,12 +110,10 @@ void OnTick()
             );
 
             sentTickets.Add(ticket);
-            SaveSentTickets();
          }
       }
    }
 }
-
 
 //+------------------------------------------------------------------+
 //| Error description                                                |
