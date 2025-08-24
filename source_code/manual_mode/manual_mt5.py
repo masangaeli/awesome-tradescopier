@@ -36,6 +36,7 @@ while True:
 
             # Get Trade Data
             tradeDataId = data['tradeDataId']
+            tradeTicketId = data['ticketId']
             lot_size = data['lotSize']
             trade_symbol = data['symbol']
             stop_loss = data['slPrice']
@@ -70,6 +71,10 @@ while True:
             if order_type == "SELL":
                 pyautogui.press('tab')
                 pyautogui.press('tab') 
+
+                # Write Trade Comment - Original Trade ID
+                pyautogui.write(tradeTicketId, 0.1)
+                
                 pyautogui.press('tab')
 
                 sleep(1)
@@ -89,6 +94,10 @@ while True:
                 pyautogui.press('tab')
                 pyautogui.press('tab')
                 pyautogui.press('tab')
+
+                # Write Trade Comment - Original Trade ID
+                pyautogui.write(tradeTicketId, 0.1)
+
                 pyautogui.press('tab')
                 pyautogui.press('space')
                 sleep(1)
@@ -103,7 +112,7 @@ while True:
                 sleep(0.5)
 
             # Clear Trade Id
-            tools.clear_trade_id_status(tradeDataId, base_api_server, connection_token)
+            tools.clear_trade_id_status(tradeDataId, base_api_server, connection_token, tradeTicketId)
         else:
             print ("Json Status is False\n")
             sleep(1)

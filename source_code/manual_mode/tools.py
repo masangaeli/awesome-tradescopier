@@ -34,7 +34,10 @@ def initiate_config():
     return [win_sub_string, connection_token, base_api_server]
 
 
-def clear_trade_id_status(trade_id, base_api_server, connection_token):
+def clear_trade_id_status(trade_id, base_api_server, connection_token, tradeTicketId):
+
+    latest_trade_file_path = ""
+    
     # URL
     meta_update_data_url = base_api_server + "/api/client/post/client/trade/copied"
     
@@ -49,6 +52,11 @@ def clear_trade_id_status(trade_id, base_api_server, connection_token):
         meta_update_data_url,
         params=params
     )
+
+    # Update Latest Trade Added Ticket
+    with open(latest_trade_file_path, "w") as f:
+        f.write(tradeTicketId)
+
     
     # Json Response
     return response.json() 
