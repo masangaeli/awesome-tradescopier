@@ -74,7 +74,7 @@ while True:
 
                 # Write Trade Comment - Original Trade ID
                 pyautogui.write(tradeTicketId, 0.1)
-                
+
                 pyautogui.press('tab')
 
                 sleep(1)
@@ -93,11 +93,11 @@ while True:
             elif order_type == "BUY":
                 pyautogui.press('tab')
                 pyautogui.press('tab')
-                pyautogui.press('tab')
 
                 # Write Trade Comment - Original Trade ID
                 pyautogui.write(tradeTicketId, 0.1)
-
+                
+                pyautogui.press('tab')
                 pyautogui.press('tab')
                 pyautogui.press('space')
                 sleep(1)
