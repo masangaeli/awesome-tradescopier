@@ -251,6 +251,9 @@ void OnTick() {
    // Check for New Trades Placed and Sync Placement Status
    check_manual_trades_then_syn();
    
+   // Check for Trades Closed on Master
+   check_new_trades_closed();
+   
 }
 
 //+------------------------------------------------------------------+
