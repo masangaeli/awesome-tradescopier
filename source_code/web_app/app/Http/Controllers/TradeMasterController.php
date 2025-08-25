@@ -13,6 +13,28 @@ use App\Models\TradeMasterClientConnection;
 
 class TradeMasterController extends Controller
 {
+    //postTradeClosedAction
+    public function postTradeClosedAction(Request $request)
+    {
+        $this->validate([
+            'positionId' => 'required'
+        ]);
+
+        $positionId = $request->positionId;
+
+        // Get Trade Data with this Position ID
+        $tradeDataQ = TradeData::where('ticketId', $positionId)->get()->toArray();
+
+        foreach ($tradeDataQ as $tradeData) {
+            $updateTData = TradeData::find($tradeData['id']);
+            $updateTData->closeStatus = "-1"; // Closed
+            $updateTData->update();
+        }
+
+        return response()->json(array('status' => True), 200);
+
+    }
+
     //postNewClientMasterConnection
     public function postNewClientMasterConnection(Request $request)
     {
@@ -151,7 +173,8 @@ class TradeMasterController extends Controller
                     $newTradeData->slPrice = $stopLoss;
                     $newTradeData->tpPrice = $takeProfit;
                     $newTradeData->ticketId = $ticketId;
-                    $newTradeData->copyStatus = 0;
+                    $newTradeData->copyStatus = 0; // Not Copied
+                    $newTradeData->closeStatus = 0; // Opened
                     $newTradeData->save();
                 }
 

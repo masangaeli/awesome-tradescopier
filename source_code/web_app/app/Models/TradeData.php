@@ -20,7 +20,7 @@ class TradeData extends Model
         
         'tradeType', 'symbol', 'openPrice', 'slPrice', 'tpPrice',
 
-        'copyStatus'
+        'copyStatus', 'closeStatus'
 
     ];
 
