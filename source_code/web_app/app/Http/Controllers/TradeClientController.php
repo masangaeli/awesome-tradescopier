@@ -37,7 +37,7 @@ class TradeClientController extends Controller
 
             if (sizeof($tradeDataWithMinusOneQ) != 0) {
 
-                $ticket_id = $tradeData['0']['ticketId'];
+                $ticket_id = $tradeDataWithMinusOneQ['0']['ticketId'];
 
                 return response()->json(array(
                         'status' => True, 
