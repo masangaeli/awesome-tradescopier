@@ -17,7 +17,7 @@ class TradeClientController extends Controller
     // postClientTradeClosedAction
     public function postClientTradeClosedAction(Request $request)
     {
-        $this->validate([
+        $request->validate([
             'positionId' => 'required'
         ]);
 
