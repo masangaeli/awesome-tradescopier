@@ -14,6 +14,27 @@ use App\Models\TradeMasterClientConnection;
 class TradeClientController extends Controller
 {
 
+    // postClientTradeClosedAction
+    public function postClientTradeClosedAction(Request $request)
+    {
+        $this->validate([
+            'positionId' => 'required'
+        ]);
+
+        $positionId = $request->positionId;
+
+        // Get Trade Data with this Position ID
+        $tradeDataQ = TradeData::where('ticketId', $positionId)->get()->toArray();
+
+        foreach ($tradeDataQ as $tradeData) {
+            $updateTData = TradeData::find($tradeData['id']);
+            $updateTData->closeStatus = "2"; // Closed on Client
+            $updateTData->update();
+        }
+
+        return response()->json(array('status' => True), 200);
+    }
+
     // deleteClientAccount
     public function deleteClientAccount(Request $request)
     {
