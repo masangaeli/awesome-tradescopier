@@ -12,7 +12,7 @@
 input string token = "";
 input string base_server = "https://tradescopier.flowsignal.xyz";
 
-CArrayLong sentTickets;  // Store already sent trade tickets in memory only
+CArrayLong sentTickets; 
 
 //+------------------------------------------------------------------+
 //| Expert initialization                                            |
@@ -29,11 +29,11 @@ void uploadNewTrade(string ticketId, double openPrice, double lotSize,
                     double takeProfit, double stopLoss, string symbol, 
                     int tradeType, string tradeComment)
 {
-   Print("Ticket ID : " + ticketId);
-   Print("Order Open Price : " + DoubleToString(openPrice, _Digits));
-   Print("Order Lot Size : " + DoubleToString(lotSize, 2));
-   Print("Order Take Profit : " + DoubleToString(takeProfit, _Digits));
-   Print("Order Stop Loss : " + DoubleToString(stopLoss, _Digits));
+   // Print("Ticket ID : " + ticketId);
+   // Print("Order Open Price : " + DoubleToString(openPrice, _Digits));
+   // Print("Order Lot Size : " + DoubleToString(lotSize, 2));
+   // Print("Order Take Profit : " + DoubleToString(takeProfit, _Digits));
+   // Print("Order Stop Loss : " + DoubleToString(stopLoss, _Digits));
 
    string cookie = NULL, headers;
    char post[], result[];
@@ -96,8 +96,6 @@ void OnTick()
             double stopLoss = PositionGetDouble(POSITION_SL);
             int type = (int) PositionGetInteger(POSITION_TYPE);
 
-            Print("New trade detected: ", ticket);
-
             uploadNewTrade(
                IntegerToString((int)ticket),
                openPrice,
@@ -113,6 +111,7 @@ void OnTick()
          }
       }
    }
+   
 }
 
 //+------------------------------------------------------------------+
@@ -181,4 +180,60 @@ int GetHttpResponseCode(string headers)
       }
    }
    return code;
+}
+
+
+
+
+
+// On Trade Transactions (orders/deals/positions)
+void OnTradeTransaction(const MqlTradeTransaction &trans,
+                        const MqlTradeRequest      &request,
+                        const MqlTradeResult       &result)
+{
+   if(trans.type != TRADE_TRANSACTION_DEAL_ADD)
+      return;
+
+   long deal_id = trans.deal;
+   if(deal_id <= 0)
+      return;
+
+   datetime t = (datetime)HistoryDealGetInteger(deal_id, DEAL_TIME);
+   HistorySelect(t-60, TimeCurrent());
+
+   // Deal Type (ENTRY_IN, OUT, INOUT)
+   long entry = HistoryDealGetInteger(deal_id, DEAL_ENTRY);
+   if(entry != DEAL_ENTRY_OUT && entry != DEAL_ENTRY_INOUT)
+      return; 
+
+   // Get Position ID
+   long pos_id = HistoryDealGetInteger(deal_id, DEAL_POSITION_ID);
+
+   // Update Trade Closed
+   updateTradeClosed(IntegerToString(pos_id));
+   
+}
+
+
+void updateTradeClosed(string pos_id) {
+   
+   Print("Close Trade Sync");
+   
+   string cookie = NULL,headers;
+   char post[], result[];
+   int res;
+      
+   string meta_update_data_url = base_server + "/api/post/master/trade/closed/action";
+   
+   // Data Post Params
+   string data_post_params = "?token=" + token + "&positionId=" + pos_id;
+   
+   StringReplace(data_post_params, " ", "%20");
+   
+   Print("URL : " + meta_update_data_url + data_post_params);
+   
+   ResetLastError();
+   int timeout = 500; 
+   res = WebRequest("POST", meta_update_data_url + data_post_params, cookie, NULL, timeout, post, 0, result, headers);
+   
 }
