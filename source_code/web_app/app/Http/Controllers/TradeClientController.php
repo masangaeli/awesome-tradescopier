@@ -41,7 +41,7 @@ class TradeClientController extends Controller
 
                 $i = 0;
                 foreach($tradeDataWithMinusOneQ as $tradeData) {
-                    $tickets_list .= $tradeData['ticketId'] + " ";
+                    $tickets_list .= $tradeData['ticketId'] . " ";
                 }
                 
                 return response()->json(array(
