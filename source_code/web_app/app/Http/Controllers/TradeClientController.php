@@ -37,18 +37,11 @@ class TradeClientController extends Controller
 
             if (sizeof($tradeDataWithMinusOneQ) != 0) {
 
-                $tickets_list = "";
-
-                $i = 0;
-                foreach($tradeDataWithMinusOneQ as $tradeData) {
-                    $tickets_list .= $tradeData['ticketId'] . "-";
-                }
-
-                $tickets_list = rtrim($tickets_list, "-");
+                $ticket_id = $tradeDataWithMinusOneQ['0']['ticketId'];
 
                 return response()->json(array(
                         'status' => True, 
-                        'tickets_list' => $tickets_list
+                        'ticket_id' => $ticket_id
                         ), 200);
             }else {
 
