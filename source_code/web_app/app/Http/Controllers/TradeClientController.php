@@ -30,7 +30,7 @@ class TradeClientController extends Controller
             $clientId = $clientTradeDataQ['0']['id'];
 
             $tradeDataWithMinusOneQ = TradeData::where([
-                                        ['tradeClientId', '=', $clientId]
+                                        ['tradeClientId', '=', $clientId],
                                         ['closeStatus', '=', "-1"]
                                         ])
                                         ->get()->toArray();
