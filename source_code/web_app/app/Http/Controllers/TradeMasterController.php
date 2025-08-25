@@ -16,7 +16,7 @@ class TradeMasterController extends Controller
     //postTradeClosedAction
     public function postTradeClosedAction(Request $request)
     {
-        $this->validate([
+        $request->validate([
             'positionId' => 'required'
         ]);
 
