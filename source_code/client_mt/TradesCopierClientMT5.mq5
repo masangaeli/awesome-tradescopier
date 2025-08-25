@@ -105,6 +105,84 @@ void clearCopyStatus(string copyTradeDataId) {
 }
 
 
+
+
+void check_new_trades_closed() {
+
+   string cookie = NULL,headers;
+   char post[], result[];
+   int res;
+      
+   string meta_get_data_url = base_server + "/api/client/pull/trades/closed/list";
+   
+   // Get Master Trades Closed 
+   string data_get_params = "?token="+token;
+   
+   StringReplace(data_get_params, " ", "%20");
+   
+   ResetLastError();
+   int timeout = 500; 
+   res = WebRequest("GET", meta_get_data_url + data_get_params, cookie, NULL, timeout, post, 0, result, headers);
+   
+   if(res == -1) {
+      Print("Error in WebRequest. Error code  =",GetLastError());
+      //MessageBox("Add the address '"+meta_post_data_url+"' in the list of allowed URLs on tab 'Expert Advisors'","Error",MB_ICONINFORMATION);
+   }else{
+      
+      Print ("URL : " + meta_get_data_url);
+      PrintFormat("The file has been successfully loaded, File size =%d bytes.",ArraySize(result));
+      
+      string res_str = CharArrayToString(result);
+      Print ("Res String : " + res_str);
+      
+      // Process the JSON Response
+      CJAVal json_obj;
+      
+      // Parse the JSON string
+      json_obj.Deserialize(res_str);
+   
+      // Extract data
+      bool status = json_obj["status"].ToBool();
+      
+      if (status == true) {
+         string tickets_list = json_obj["tickets_list"].ToStr();
+         
+         string tickets_arr[];
+         
+         int count_tickets = explode(tickets_list, " ", tickets_arr);
+         
+         for(int i=0; i<count_tickets; i++) {
+            // Close Trade with Ticket ID
+            closeTradeWithTicketCommentId(tickets_arr[i]);
+            
+            // Update Trade Closed
+            updateTradeClosed(tickets_arr[i]);
+         }
+      }
+   }
+
+}
+
+
+void updateTradeClosed(string ticketId) {
+   Print("Update Trade Comment ID : " + ticketId);
+}
+
+
+void closeTradeWithTicketCommentId(string ticketId) {
+   Print("Closing Ticket Comment ID : " + ticketId);
+}
+
+//+------------------------------------------------------------------+
+//| Custom explode function                                          |
+//+------------------------------------------------------------------+
+int explode(string source, string delimiter, string &result[])
+{
+   // StringSplit 
+   return StringSplit(source, delimiter, result);
+}
+
+
 void check_new_trades() {
 
    string cookie = NULL,headers;
@@ -172,6 +250,9 @@ void OnTick() {
 
    // Check for New Trades Placed and Sync Placement Status
    check_manual_trades_then_syn();
+   
+   // Check for Trades Closed on Master
+   check_new_trades_closed();
    
 }
 
