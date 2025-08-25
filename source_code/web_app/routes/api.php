@@ -10,6 +10,9 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+// Check Trade Closed
+Route::get('/client/pull/trades/closed/list', [TradeClientController::class, 'pullTradesClosedList']);
+
 // Update Trade Client Closed
 Route::post('/post/client/trade/closed/action', [TradeClientController::class, 'postClientTradeClosedAction']);
 

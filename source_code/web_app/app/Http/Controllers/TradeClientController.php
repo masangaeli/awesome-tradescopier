@@ -14,6 +14,54 @@ use App\Models\TradeMasterClientConnection;
 class TradeClientController extends Controller
 {
 
+    // pullTradesClosedList
+    public function pullTradesClosedList(Request $request)
+    {
+        $request->validate([
+            'token' => 'required'
+        ]);
+
+        $token = $request->token;
+
+        $clientTradeDataQ = TradeClient::where('clientToken', $token)->get()->toArray();
+
+        if (sizeof($clientTradeDataQ) == 1) {
+
+            $clientId = $clientTradeDataQ['0']['id'];
+
+            $tradeDataWithMinusOneQ = TradeData::where([
+                                        ['tradeClientId', '=', $clientId]
+                                        ['closeStatus', '=', "-1"]
+                                        ])
+                                        ->get()->toArray();
+
+            if (sizeof($tradeDataWithMinusOneQ) != 0) {
+
+                $tickets_list = "";
+
+                $i = 0;
+                foreach($tradeDataWithMinusOneQ as $tradeData) {
+                    $tickets_list += $tradeData['ticketId'] + " ";
+                }
+                
+                return response()->json(array(
+                        'status' => True, 
+                        'tickets_list' => $tickets_list
+                        ), 200);
+            }else {
+
+                return response()->json(array(
+                    'status' => False
+                ), 200);
+            }
+        }else {
+
+            return response()->json(array('status' => False), 200);
+
+        }
+
+    }
+
     // postClientTradeClosedAction
     public function postClientTradeClosedAction(Request $request)
     {
