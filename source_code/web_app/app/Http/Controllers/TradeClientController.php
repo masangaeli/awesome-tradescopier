@@ -24,7 +24,10 @@ class TradeClientController extends Controller
         $positionId = $request->positionId;
 
         // Get Trade Data with this Position ID
-        $tradeDataQ = TradeData::where('ticketId', $positionId)->get()->toArray();
+        $tradeDataQ = TradeData::where([
+            ['ticketId', '=', $positionId],
+            ['tradeSource', '!=', 'MASTER_REF']
+            ])->get()->toArray();
 
         foreach ($tradeDataQ as $tradeData) {
             $updateTData = TradeData::find($tradeData['id']);
