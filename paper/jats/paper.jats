@@ -18,8 +18,9 @@
 <article-id pub-id-type="publisher-id">0</article-id>
 <article-id pub-id-type="doi">N/A</article-id>
 <title-group>
-<article-title>AwesomeTrades-Copier: A Hybrid Trade Replication System
-for MetaTrader with Manual Execution Mode</article-title>
+<article-title>AwesomeTrades-Copier: An Open-Source Hybrid Trade
+Replication Framework for MetaTrader with Automated and Manual Execution
+Modes</article-title>
 </title-group>
 <contrib-group>
 <contrib contrib-type="author" corresp="yes">
@@ -72,17 +73,26 @@ a Creative Commons Attribution 4.0 International License (CC BY
 <kwd>MQL4</kwd>
 <kwd>MQL5</kwd>
 <kwd>Trade Copier</kwd>
+<kwd>Laravel Framework</kwd>
 </kwd-group>
 </article-meta>
 </front>
 <body>
 <sec id="summary">
   <title>Summary</title>
-  <p>This paper presents AwesomeTrades-Copier, a software solution that
-  supports both Expert Advisor (EA)-based copying and manual trade
-  execution modes, enabling users to replicate trades across MetaTrader
-  4/5 (MT4/MT5) platforms while maintaining compliance with broker
-  restrictions on automated trading. The system provides:</p>
+  <p>This paper introduces AwesomeTrades-Copier, an open-source trade
+  replication system developed using the Laravel framework. The system
+  supports both Expert Advisor (EA)-based trade copying and manual
+  execution, enabling seamless replication across MetaTrader 4 and 5
+  (MT4/MT5) platforms while ensuring compliance with broker-imposed
+  restrictions on automated
+  trading(<xref alt="EA Coder, 2025" rid="ref-eacoder2025regulatory" ref-type="bibr">EA
+  Coder, 2025</xref>). The integration of algorithmic trading enhances
+  risk management and operational safety Oyeniyi et al.
+  (<xref alt="2024" rid="ref-oyeniyi2024algorithmic" ref-type="bibr">2024</xref>),
+  while the Laravel architecture provides robustness and
+  scalability(<xref alt="Laravel Team, 2025" rid="ref-laravel2025docs" ref-type="bibr">Laravel
+  Team, 2025</xref>).</p>
   <list list-type="bullet">
     <list-item>
       <p><bold>EA Mode</bold>: High-speed trade replication for
@@ -93,21 +103,35 @@ a Creative Commons Attribution 4.0 International License (CC BY
       for restricted environments</p>
     </list-item>
   </list>
-  <p>Key features include: - <bold>Broker compliance</bold>:
-  Configurable latency (300-1500ms) in manual mode -
-  <bold>Cross-platform support</bold>: Compatible with MT4 and MT5 -
-  <bold>Modular architecture</bold>: No external dependencies
-  required</p>
+  <p>Key features include:</p>
+  <list list-type="bullet">
+    <list-item>
+      <p><bold>Broker compliance</bold>: Configurable latency
+      (300-1500ms) in manual mode</p>
+    </list-item>
+    <list-item>
+      <p><bold>Cross-platform support</bold>: Compatible with MT4 and
+      MT5</p>
+    </list-item>
+    <list-item>
+      <p><bold>Modular architecture</bold>: No external dependencies
+      required</p>
+    </list-item>
+  </list>
 </sec>
 <sec id="statement-of-need">
   <title>Statement of Need</title>
   <sec id="problem">
     <title>Problem</title>
-    <p>Proprietary trading firms (e.g., FTMO, The5ers) and brokers
-    frequently implement policies that:</p>
+    <p>Proprietary trading firms (e.g., The 5%ers, FundedNext, FTMO and
+    Alpha Capital Group) and brokers frequently implement policies
+    that:</p>
     <list list-type="order">
       <list-item>
         <p>Prohibit EAs in evaluation challenges</p>
+      </list-item>
+      <list-item>
+        <p>Prohibit EAs in competition challenges</p>
       </list-item>
       <list-item>
         <p>Restrict trade copiers to prevent latency arbitrage</p>
@@ -161,11 +185,112 @@ a Creative Commons Attribution 4.0 International License (CC BY
 </sec>
 <sec id="technical-implementation">
   <title>Technical Implementation</title>
+  <p>The AwesomeTrades-Copier is implemented using the Laravel framework
+  and follows a modular architecture that separates trade replication
+  logic, broker communication, and user interface components. It
+  supports Expert Advisor (EA)-based copying for automated execution as
+  well as manual execution for brokers that restrict automated
+  trades.</p>
+  <p>For detailed technical documentation, installation instructions,
+  and usage examples, please refer to the project repository on GitHub:
+  https://github.com/masangaeli/awesome-tradescopier</p>
   <sec id="architecture">
     <title>Architecture</title>
+    <p>The AwesomeTrades-Copier is designed with a modular architecture
+    to support two distinct trade replication modes: Expert Mode and
+    Manual Mode. Each mode leverages Laravel’s robust MVC framework to
+    ensure maintainability, scalability, and secure interaction with
+    MetaTrader 4/5 platforms.</p>
   </sec>
+</sec>
+<sec id="expert-mode-architecture">
+  <title>Expert Mode Architecture</title>
+  <p>In Expert Mode, the system performs automated trade replication
+  using Expert Advisors (EA). Trades from the source account are
+  captured in real-time and transmitted to target accounts with minimal
+  latency. The architecture includes modules for trade monitoring, data
+  serialization, broker communication, and logging, ensuring fast and
+  reliable execution in brokers that allow automated trading.</p>
+  <fig>
+    <caption><p>image info</p></caption>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="./pictures/main_design.png" />
+  </fig>
+</sec>
+<sec id="manual-mode-architecture">
+  <title>Manual Mode Architecture</title>
+  <p>Manual Mode simulates human-like trade execution to comply with
+  brokers that restrict automation. The system introduces configurable
+  latency and randomized execution patterns to replicate trades safely.
+  Key modules include trade queue management, execution scheduler, and
+  broker interface, all coordinated through Laravel’s MVC design to
+  maintain modularity and robustness.</p>
+  <fig>
+    <caption><p>image info</p></caption>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="./pictures/main_design.png" />
+  </fig>
 </sec>
 </body>
 <back>
+<ref-list>
+  <title></title>
+  <ref id="ref-articleAddyWAetal2024">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Addy</surname><given-names>Wilhelmina</given-names></name>
+        <name><surname>Ajayi-Nifise</surname><given-names>Adeola</given-names></name>
+        <name><surname>Bello</surname><given-names>Binaebi</given-names></name>
+        <name><surname>Tula</surname><given-names>Sunday</given-names></name>
+        <name><surname>Odeyemi</surname><given-names>Olubusola</given-names></name>
+        <name><surname>Falaiye</surname><given-names>Titilola</given-names></name>
+      </person-group>
+      <article-title>Machine learning in financial markets: A critical review of algorithmic trading and risk management</article-title>
+      <source>International Journal of Science and Research Archive</source>
+      <year iso-8601-date="2024-02">2024</year><month>02</month>
+      <volume>11</volume>
+      <pub-id pub-id-type="doi">10.30574/ijsra.2024.11.1.0292</pub-id>
+      <fpage>1853</fpage>
+      <lpage>1862</lpage>
+    </element-citation>
+  </ref>
+  <ref id="ref-oyeniyi2024algorithmic">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <name><surname>Oyeniyi</surname><given-names>Lawrence Damilare</given-names></name>
+        <name><surname>Ugochukwu</surname><given-names>Chinonye Esther</given-names></name>
+        <name><surname>Mhlongo</surname><given-names>Noluthando Zamanjomane</given-names></name>
+      </person-group>
+      <article-title>Analyzing the impact of algorithmic trading on stock market behavior: A comprehensive review</article-title>
+      <source>World Journal of Advanced Engineering Technology and Sciences</source>
+      <year iso-8601-date="2024">2024</year>
+      <volume>11</volume>
+      <issue>2</issue>
+      <pub-id pub-id-type="doi">10.30574/wjaets.2024.11.2.0136</pub-id>
+      <fpage>437</fpage>
+      <lpage>453</lpage>
+    </element-citation>
+  </ref>
+  <ref id="ref-laravel2025docs">
+    <element-citation publication-type="book">
+      <person-group person-group-type="author">
+        <string-name>Laravel Team</string-name>
+      </person-group>
+      <source>Laravel documentation</source>
+      <publisher-name>Laravel LLC</publisher-name>
+      <year iso-8601-date="2025">2025</year>
+      <uri>https://laravel.com/docs</uri>
+    </element-citation>
+  </ref>
+  <ref id="ref-eacoder2025regulatory">
+    <element-citation publication-type="article-journal">
+      <person-group person-group-type="author">
+        <string-name>EA Coder</string-name>
+      </person-group>
+      <article-title>Regulatory changes affecting forex EA traders</article-title>
+      <source>Forex EA Coder (blog)</source>
+      <year iso-8601-date="2025">2025</year>
+      <uri>https://forexeacoder.com/regulatory-changes-affecting-forex-ea-traders/</uri>
+    </element-citation>
+  </ref>
+</ref-list>
 </back>
 </article>
