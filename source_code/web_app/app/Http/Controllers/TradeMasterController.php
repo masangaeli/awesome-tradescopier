@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 use App\Models\TradeData;
 use App\Models\TradeMaster;
+use App\Models\SpecialCommand;
 use App\Models\TradeMasterClientConnection;
 
 
@@ -27,20 +29,31 @@ class TradeMasterController extends Controller
         $masterDataQ = TradeMaster::where('masterToken', $token)
                         ->get()->toArray();
 
-        if (sizeof($masterDataQ) == 1) {
-            // Check if this Client Have CLOSE_ALL Special Command
-            $specialCommandQ = SpecialCommand::where([
-                ['clientId', '=', $masterDataQ['0']['id']],
-                ['clearedStatus', '=', 'F']
-            ])->get();
+        // Get Clients Connected to this Master
 
-            if (sizeof($specialCommandQ) == 0) {
+        // Get Client Master
+        $clientConnectionQ = TradeMasterClientConnection::where([
+            ['masterId', '=', $masterDataQ['0']['id']]
+        ])->get();
+
+        foreach($clientConnectionQ as $masterConn) {
+
+            // Check if this Client Have CLOSE_ALL Special Command
+            $specialCommandQ = SpecialCommand::where('clientId', $masterDataQ[0]['id'])
+                ->where('clearedStatus', 'F')
+                ->orderBy('created_at', 'desc')
+                ->first();
+            
+            $now = Carbon::now();
+            
+            if (!$specialCommandQ || $now->diffInMinutes($specialCommandQ->created_at) > 1) {
                 $newSpecialCommand = new SpecialCommand();
-                $newSpecialCommand->userId = $masterDataQ['0']['userId'];
-                $newSpecialCommand->clientId = $masterDataQ['0']['id'];
+                $newSpecialCommand->userId = $masterDataQ[0]['userId'];
+                $newSpecialCommand->clientId = $masterConn->clientId;
                 $newSpecialCommand->clearedStatus = "F"; 
                 $newSpecialCommand->save();
-            }
+            }            
+        
         }
 
         return response()->json(array('status' => True), 200);
