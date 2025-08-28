@@ -5,7 +5,7 @@ import pygetwindow as gw
 
 def clear_close_all_trades_op(base_api_server, connection_token):
     # Meta Data URL
-    meta_data_url = base_api_server + "/api/client/pull/master/trades/list?token=" + connection_token
+    meta_data_url = base_api_server + "/api/post/client/trade/closed/action?token=" + connection_token
 
     # Make the POST request
     requests.post(meta_data_url)
