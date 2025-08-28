@@ -54,6 +54,10 @@ while True:
             pyautogui.press('enter')
             sleep(1)
 
+            # Update Special Operation Completed
+            tools.clear_close_all_trades_op(base_api_server, connection_token)
+
+
         elif special_command == "TRADES_LIST":
             # Compare the status 
             if status is True:       
