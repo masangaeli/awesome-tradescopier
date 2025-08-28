@@ -34,6 +34,9 @@ while True:
             # Bring Mt5 Window to Focus
             tools.activate_window(win_sub_string)
         
+            # Select Tool Box
+            pyautogui.click(x=217, y=584) 
+
             # Select One Trade
             print("Select One Trade")
             pyautogui.press('x')
