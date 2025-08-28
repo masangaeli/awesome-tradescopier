@@ -194,7 +194,7 @@ class TradeClientController extends Controller
             if (sizeof($openTrade) == 1) {
                 return response()->json(array(
                     'status' => True, 
-                    'special_command' => 'TRADES_LIST'
+                    'special_command' => 'TRADES_LIST',
                     'tradeDataId' => $openTrade['0']['id'],
                     'tradeSource' => $openTrade['0']['tradeSource'],
                     'tradeSourceId' => $openTrade['0']['tradeSourceId'],
