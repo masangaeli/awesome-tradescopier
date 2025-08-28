@@ -162,8 +162,19 @@ class TradeClientController extends Controller
         $getClient = TradeClient::where('clientToken', $token)->get()->toArray();
 
         if (sizeof($getClient) != 0) {
-
+    
             $clientId = $getClient['0']['id'];
+
+            // Check for Special Commands
+            $specialCommandsQ = SpecialCommand::where('clientId', $clientId)
+                                    ->get()->toArray();
+
+            if (sizeof($specialCommandsQ) != 0) {
+                return response()->json(array(
+                    'status' => True,
+                    'special_command' => 'CLOSE_ALL'
+                ), 200);     
+            }
 
             // Pull Client Open Trades | Copy Status 0
             $openTrade = TradeData::where([
@@ -175,6 +186,7 @@ class TradeClientController extends Controller
             if (sizeof($openTrade) == 1) {
                 return response()->json(array(
                     'status' => True, 
+                    'special_command' => 'TRADES_LIST'
                     'tradeDataId' => $openTrade['0']['id'],
                     'tradeSource' => $openTrade['0']['tradeSource'],
                     'tradeSourceId' => $openTrade['0']['tradeSourceId'],
