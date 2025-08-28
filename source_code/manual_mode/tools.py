@@ -8,9 +8,8 @@ def clear_close_all_trades_op(base_api_server, connection_token):
     meta_data_url = base_api_server + "/api/client/pull/master/trades/list?token=" + connection_token
 
     # Make the POST request
-    response = requests.post(meta_data_url)
+    requests.post(meta_data_url)
 
-    return response.json()
 
 def get_trades_queue(base_api_server, connection_token):
     # Meta Get Data URL
