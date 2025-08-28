@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\TradeData;
 use App\Models\TradeClient;
 use App\Models\TradeMaster;
+use App\Models\SpecialCommand;
 use App\Models\TradeMasterClientConnection;
 
 class TradeClientController extends Controller
@@ -61,22 +62,43 @@ class TradeClientController extends Controller
     public function postClientTradeClosedAction(Request $request)
     {
         $request->validate([
-            'positionId' => 'required'
+            'token' => 'required'
         ]);
 
-        $positionId = $request->positionId;
+        $token = $request->token;
+
+        // Get Client ID with a Close
+        $clientDataQ = TradeClient::where('clientToken', $token)
+                        ->get()->toArray();
+
+        if (sizeof($clientDataQ) == 1) {
+            // Check if this Client Have CLOSE_ALL Special Command
+            $specialCommandQ = SpecialCommand::where([
+                ['clientId', '=', $clientDataQ['0']['id']],
+                ['clearedStatus', '=', 'F']
+            ])->get();
+
+            if (sizeof($specialCommandQ) == 0) {
+                $newSpecialCommand = new SpecialCommand();
+                $newSpecialCommand->userId = $clientDataQ['0']['userId'];
+                $newSpecialCommand->clientId = $clientDataQ['0']['id'];
+                $newSpecialCommand->clearedStatus = "F"; 
+                $newSpecialCommand->save();
+            }
+        }
 
         // Get Trade Data with this Position ID
-        $tradeDataQ = TradeData::where([
-            ['ticketId', '=', $positionId],
-            ['tradeSource', '!=', 'MASTER_REF']
-            ])->get()->toArray();
+        // $tradeDataQ = TradeData::where([
+        //     ['ticketId', '=', $positionId],
+        //     ['tradeSource', '!=', 'MASTER_REF']
+        //     ])->get()->toArray();
 
-        foreach ($tradeDataQ as $tradeData) {
-            $updateTData = TradeData::find($tradeData['id']);
-            $updateTData->closeStatus = "2"; // Closed on Client
-            $updateTData->update();
-        }
+
+        // foreach ($tradeDataQ as $tradeData) {
+        //     $updateTData = TradeData::find($tradeData['id']);
+        //     $updateTData->closeStatus = "2"; // Closed on Client
+        //     $updateTData->update();
+        // }
 
         return response()->json(array('status' => True), 200);
     }
@@ -166,7 +188,10 @@ class TradeClientController extends Controller
             $clientId = $getClient['0']['id'];
 
             // Check for Special Commands
-            $specialCommandsQ = SpecialCommand::where('clientId', $clientId)
+            $specialCommandsQ = SpecialCommand::where([
+                                    ['clientId', '=', $clientId],
+                                    ['clearedStatus', '=', 'F']
+                                    ])
                                     ->get()->toArray();
 
             if (sizeof($specialCommandsQ) != 0) {
