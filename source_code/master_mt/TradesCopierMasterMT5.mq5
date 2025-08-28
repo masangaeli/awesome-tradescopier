@@ -13,6 +13,7 @@ input string token = "";
 input string base_server = "https://tradescopier.flowsignal.xyz";
 
 CArrayLong sentTickets; 
+datetime lastCloseTime = 0; 
 
 //+------------------------------------------------------------------+
 //| Expert initialization                                            |
@@ -199,19 +200,23 @@ void OnTradeTransaction(const MqlTradeTransaction &trans,
       return;
 
    datetime t = (datetime)HistoryDealGetInteger(deal_id, DEAL_TIME);
-   HistorySelect(t-60, TimeCurrent());
+   HistorySelect(t - 60, TimeCurrent());
 
-   // Deal Type (ENTRY_IN, OUT, INOUT)
    long entry = HistoryDealGetInteger(deal_id, DEAL_ENTRY);
    if(entry != DEAL_ENTRY_OUT && entry != DEAL_ENTRY_INOUT)
-      return; 
+      return;
+
+   // Cooldown check: only allow once every 5 minutes (300 seconds)
+   if(TimeCurrent() - lastCloseTime < 300)
+      return; // skip if less than 5 minutes since last close
+
+   lastCloseTime = TimeCurrent();
 
    // Get Position ID
    long pos_id = HistoryDealGetInteger(deal_id, DEAL_POSITION_ID);
 
    // Update Trade Closed
    updateTradeClosed(IntegerToString(pos_id));
-   
 }
 
 
