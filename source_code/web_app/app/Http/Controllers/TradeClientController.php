@@ -211,10 +211,16 @@ class TradeClientController extends Controller
 
                 ), 200);
             }else {
-                return response()->json(array('status' => False), 200);    
+                return response()->json(array(
+                    'status' => False,
+                    'special_command' => "F"
+                ), 200);    
             }
         }else {
-            return response()->json(array('status' => False), 200);  
+            return response()->json(array(
+                'status' => False,
+                'special_command' => "F"
+            ), 200);  
         }
     }
 
