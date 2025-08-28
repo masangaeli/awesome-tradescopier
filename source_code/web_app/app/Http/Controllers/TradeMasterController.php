@@ -13,8 +13,41 @@ use App\Models\TradeMasterClientConnection;
 
 class TradeMasterController extends Controller
 {
+
+    //postTradeClosedActionManual
+    public function postTradeClosedActionManual(Request $request)
+    {
+        $request->validate([
+            'token' => 'required'
+        ]);
+
+        $token = $request->token;
+
+        // Get Master ID with a Close
+        $masterDataQ = TradeMaster::where('masterToken', $token)
+                        ->get()->toArray();
+
+        if (sizeof($masterDataQ) == 1) {
+            // Check if this Client Have CLOSE_ALL Special Command
+            $specialCommandQ = SpecialCommand::where([
+                ['clientId', '=', $masterDataQ['0']['id']],
+                ['clearedStatus', '=', 'F']
+            ])->get();
+
+            if (sizeof($specialCommandQ) == 0) {
+                $newSpecialCommand = new SpecialCommand();
+                $newSpecialCommand->userId = $masterDataQ['0']['userId'];
+                $newSpecialCommand->clientId = $masterDataQ['0']['id'];
+                $newSpecialCommand->clearedStatus = "F"; 
+                $newSpecialCommand->save();
+            }
+        }
+
+        return response()->json(array('status' => True), 200);
+    }
+
     //postTradeClosedAction
-    public function postTradeClosedAction(Request $request)
+    public function postTradeClosedActionEA(Request $request)
     {
         $request->validate([
             'positionId' => 'required'

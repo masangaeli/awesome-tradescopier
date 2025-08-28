@@ -17,7 +17,7 @@ Route::get('/client/pull/trades/closed/list', [TradeClientController::class, 'pu
 Route::post('/post/client/trade/closed/action', [TradeClientController::class, 'postClientTradeClosedAction']);
 
 // Update Trade Closed
-Route::post('/post/master/trade/closed/action', [TradeMasterController::class, 'postTradeClosedAction']);
+Route::post('/post/master/trade/closed/action', [TradeMasterController::class, 'postTradeClosedActionManual']);
 
 // Delete All Trade Data
 Route::get('/delete/all/trade/data', [TradeDataController::class, 'deleteAllTradeData']);
