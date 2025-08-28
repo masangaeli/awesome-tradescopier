@@ -73,7 +73,8 @@ class TradeClientController extends Controller
 
         // Check for Special Commands to Update
         $specialCommandsCheck = SpecialCommand::where([
-                    ['clientId', '=', $clientDataQ['0']['id']]
+                    ['clientId', '=', $clientDataQ['0']['id']],
+                    ['clearedStatus', '=', 'F']
                     ])->get()->toArray();
 
         if (sizeof($specialCommandsCheck) == 1) {
