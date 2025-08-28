@@ -206,8 +206,8 @@ void OnTradeTransaction(const MqlTradeTransaction &trans,
    if(entry != DEAL_ENTRY_OUT && entry != DEAL_ENTRY_INOUT)
       return;
 
-   // Cooldown check: only allow once every 5 minutes (300 seconds)
-   if(TimeCurrent() - lastCloseTime < 300)
+   // Cooldown check: only allow once every 1 minutes (60 seconds)
+   if(TimeCurrent() - lastCloseTime < 60)
       return; // skip if less than 5 minutes since last close
 
    lastCloseTime = TimeCurrent();
